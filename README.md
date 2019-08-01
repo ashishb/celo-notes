@@ -11,15 +11,25 @@ export NETWORK_NAME=integration && celotooljs deploy initial testnet -e ${NETWOR
 ```
 
 #### Fast while keeping slow things like load balancers intact
-```
-export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWORK_NAME} --reset
-```
+
+1. Set the network name - `export NETWORK_NAME=integration`
+2. Deploy the network - ` && celotooljs deploy upgrade testnet -e ${NETWORK_NAME} --reset`
+3. Check that blocks are being mined - [https://alfajoresstaging-blockscout.celo-testnet.org/blocks](https://alfajoresstaging-blockscout.celo-testnet.org/blocks)
+4. (optional) Check that syncing works - `packages/celotool $ GETH_DIR=~/celo/geth ./geth_tests/integration_network_sync_test.sh ${NETWORK_NAMe} ultralight`
+5. Deploy the contracts - `celotooljs deploy initial contracts -e ${NETWORK_NAME}`
+6. Test that contract interaction works - `packages/contractkit $ yarn test`
 
 ### How to upgrade existing network
 
 ```
 export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWORK_NAME} && celotooljs deploy upgrade contracts -e ${NETWORK_NAME}
 ```
+
+### How to modify verbosity of running geth
+
+1. Log onto the running pod: `kubectl exec --namespace alfajoresstaging alfajoresstaging-validators-66 -i -t /bin/sh`
+2. Execute `geth attach --exec "debug.verbosity(5)"`
+3. Once you are done testing. Reset the verbosity back to a low value: `geth attach --exec "debug.verbosity(2)"`
 
 ## Geth
 
