@@ -4,20 +4,23 @@
 
 ### How to deploy a new network
 
-
 #### Thorough but slow
+
 ```
-export NETWORK_NAME=integration && celotooljs deploy initial testnet -e ${NETWORK_NAME} && celotooljs deploy initial contracts -e ${NETWORK_NAME}
+export NETWORK_NAME=integration &&
+ celotooljs deploy initial testnet -e ${NETWORK_NAME} &&
+ celotooljs deploy initial contracts -e ${NETWORK_NAME}
 ```
 
 #### Fast while keeping slow things like load balancers intact
 
 1. Set the network name - `export NETWORK_NAME=integration`
-2. Deploy the network - ` && celotooljs deploy upgrade testnet -e ${NETWORK_NAME} --reset`
-3. Check that blocks are being mined - [https://alfajoresstaging-blockscout.celo-testnet.org/blocks](https://alfajoresstaging-blockscout.celo-testnet.org/blocks)
-4. (optional) Check that syncing works - `packages/celotool $ GETH_DIR=~/celo/geth ./geth_tests/integration_network_sync_test.sh ${NETWORK_NAMe} ultralight`
-5. Deploy the contracts - `celotooljs deploy initial contracts -e ${NETWORK_NAME}`
-6. Test that contract interaction works - `packages/contractkit $ yarn test`
+2. Deploy the network - `celotooljs deploy upgrade testnet -e ${NETWORK_NAME} --reset`
+3. Deploy blockscout - `celotooljs deploy initial blockscout -e ${NETWORK_NAME}`
+4. Check that blocks are being mined - `open https://${NETWORK_NAME}-blockscout.celo-testnet.org/blocks`
+5. (optional) Check that syncing works - `packages/celotool $ GETH_DIR=~/celo/geth ./geth_tests/integration_network_sync_test.sh ${NETWORK_NAMe} ultralight`
+6. Deploy the contracts - `celotooljs deploy initial contracts -e ${NETWORK_NAME} --verbose`. This command buffers its output and therefore, you won't see anything for ~40 mins.
+7. Test that contract interaction works - `packages/contractkit $ yarn build ${NETWORK_NAME} && yarn test`
 
 ### How to upgrade existing network
 
@@ -31,6 +34,25 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 2. Execute `geth attach --exec "debug.verbosity(5)"`
 3. Once you are done testing. Reset the verbosity back to a low value: `geth attach --exec "debug.verbosity(2)"`
 
+### How to publish new npm packages
+
+```
+packages/contractkit $ yarn publish --access=public
+```
+
+### How to test Circle CI jobs locally before deploying
+
+`brew cask install docker && brew install circleci` - one time setup
+Now use `circleci config validate` to validate the config file at `$PWD/.circleci/config.yml`. The checks are basic and can still miss bugs.
+
+1. Start Docker
+2. Use `circleci local execute --job test-npm-package-install` to run `test-npm-package-install` job locally on Circle CI.
+3. Local execution does not support workflows, so, `install_dependencies` step would be skipped. To emulate access to the monorepo, mount the celo-monorepo dir to workspace directory (`/home/circleci/app`).
+
+```
+celo-monorepo $ circleci local execute --job test-npm-package-install -v $PWD:/home/circleci/app
+```
+
 ## Geth
 
 ### How to build geth for Mac OS
@@ -38,12 +60,12 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 1. `make -j geth` or,
 2. `celotooljs geth build` ([celotooljs](https://github.com/celo-org/celo-monorepo/tree/master/packages/celotool))
 
-
 ### How to build geth for Android
 
 ```
 ANDROID_NDK=/usr/local/Caskroom/android-ndk/18/android-ndk-r18/ make android -j
 ```
+
 This produces a binary at `build/bin/geth.aar`. Copy it over to monorepo to test the new geth with Android
 
 ```
@@ -61,7 +83,7 @@ Sometimes, you want to call a smart contract to fetch some data from the blockch
 
 #### What you need
 
- 1. [`EVM`](https://github.com/celo-org/geth/blob/master/core/vm/evm.go#L108) object
+1. [`EVM`](https://github.com/celo-org/geth/blob/master/core/vm/evm.go#L108) object
 2. Location of the contract `contractAddress` - either the contract is pre-compiled and deployed at a [fixed location](https://github.com/celo-org/geth/blob/master/params/protocol_params.go#L107) or the location is passed as a geth command-line parameter.
 3. Function selector - The function signature like `balanceOf(address)` is hashed and trimmed to get a function selector, see an [example](https://github.com/celo-org/geth/blob/c7e03ac465dbe8b8c8b70fa09aac267b7d624d19/core/state_transition.go#L328).
 4. ABI - Combining the function selector and arguments converted to ABI gives you the full `transactiondata`. This [blog post](https://medium.com/@hayeah/how-to-decipher-a-smart-contract-method-call-8ee980311603) is a good introduction. Here's how we [implement](https://github.com/celo-org/geth/blob/c7e03ac465dbe8b8c8b70fa09aac267b7d624d19/core/state_transition.go#L346-L362) it
@@ -77,10 +99,10 @@ If the call is state-modifying then use `evm.Call`. Signature is `ret, leftoverG
 
 Example of a state-modifying call: [credit/debit Stable Token balance](https://github.com/celo-org/geth/blob/c7e03ac465dbe8b8c8b70fa09aac267b7d624d19/core/state_transition.go#L268)
 
-
 ## Mobile
 
 ### How to build a release binary for Android - signed by debug signatures
+
 ```
 CELO_RELEASE_STORE_PASSWORD='' ./gradlew assembleRelease --info && echo android | java -jar ~/src/adb-enhanced/src/apksigner.jar sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey ~/celo/celo-monorepo/packages/mobile/android/app/build/outputs/apk/release/app-x86-release-unsigned.apk
 ```
