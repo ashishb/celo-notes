@@ -36,6 +36,17 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 
 ### How to publish new npm packages
 
+#### Test
+
+```
+# For testing contractkit, cli, and utils package before publishing them
+$ docker run -v $PWD/packages/contractkit:/tmp/npm_package -it --entrypoint bash node:8
+# Inside docker
+$ cd /tmp && yarn add /tmp/npm_package
+```
+
+### Publish
+
 ```
 packages/contractkit $ yarn publish --access=public
 ```
@@ -52,6 +63,10 @@ Now use `circleci config validate` to validate the config file at `$PWD/.circlec
 ```
 celo-monorepo $ circleci local execute --job test-npm-package-install -v $PWD:/home/circleci/app
 ```
+
+### Docker cleanup
+
+`docker image prune` to prune dangling images and `docker image prune -a` to prune images with no associated containers.
 
 ## Geth
 
