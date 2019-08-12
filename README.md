@@ -78,7 +78,7 @@ celo-monorepo $ circleci local execute --job test-npm-package-install -v $PWD:/h
 ### How to build geth for Android
 
 ```
-ANDROID_NDK=/usr/local/Caskroom/android-ndk/18/android-ndk-r18/ make android -j
+ANDROID_NDK_HOME=/usr/local/Caskroom/android-ndk/19/android-ndk-r19/ NDK_VERSION=19 make android -j
 ```
 
 This produces a binary at `build/bin/geth.aar`. Copy it over to monorepo to test the new geth with Android
