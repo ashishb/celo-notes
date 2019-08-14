@@ -89,6 +89,12 @@ Bulldozer was built and started from source code using `cd /home/ashishb/go/src/
 
 `docker system prune` is even more aggressive - see [https://stackoverflow.com/a/36584376](https://stackoverflow.com/a/36584376)
 
+### PR submitted by outsiders in Celo repo
+
+```
+gh pr | sort | uniq | grep '@' | grep -v -E '(@MarkusBerlin|@PratyushRT|@aaronmgdr|@anikaraghu|@annakaz|@arielgabizon|@asaj|@ashishb|@bohan-zhang|@bricewang|@catgu5|@celo-ci-bot-user|@celogitbook|@cla-bel|@cmcewen|@coreycelo|@drklee3|@flashman1234|@isabellewei|@jansel|@jarmg|@jeanregisser|@jmrossy|@kevjue|@kobigurk|@m-chrzan|@marekolszewski|@martinvol|@mcortesi|@medhak1|@misterz1977|@moisternw|@mstraka100|@nambrot|@nicholasguo|@nityas|@nvesely|@nvtaveras|@rcroessmann|@rohit-dua|@sallyjyl|@shellygr|@sissnad|@stigi|@timmoreton|@tjlahey|@tkporter|@trianglesphere|@tromer|@wilcoxjay|@witoff|@yerdua|@yorhodes)'
+```
+
 ## Geth
 
 ### How to build geth for Mac OS
