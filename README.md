@@ -105,7 +105,7 @@ gh pr | sort | uniq | grep '@' | grep -v -E '(@MarkusBerlin|@PratyushRT|@aaronmg
 ### How to build geth for Android
 
 ```
-ANDROID_NDK_HOME=/usr/local/Caskroom/android-ndk/19/android-ndk-r19/ NDK_VERSION=19 make android -j
+NDK_VERSION=android-ndk-r19c ANDROID_NDK=ndk_bundle/android-ndk-r19c make ndk_bundle ; NDK_VERSION=android-ndk-r19c ANDROID_NDK=ndk_bundle/android-ndk-r19c make -j android
 ```
 
 This produces a binary at `build/bin/geth.aar`. Copy it over to monorepo to test the new geth with Android
