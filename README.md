@@ -1,5 +1,11 @@
 # Celo related notes
 
+  * [Production](#production)
+  * [Geth](#geth)
+  * [Mobile](#mobile)
+
+<!-- Use http://ecotrust-canada.github.io/markdown-toc/ for TOC generation -->
+
 ## Production
 
 ### How to deploy a new network
