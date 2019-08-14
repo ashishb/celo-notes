@@ -42,7 +42,7 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 # For testing contractkit, cli, and utils package before publishing them
 $ docker run -v $PWD/packages/contractkit:/tmp/npm_package -it --entrypoint bash node:8
 # Inside docker
-$ cd /tmp && yarn add /tmp/npm_package
+$ cd /tmp and yarn add /tmp/npm_package
 ```
 
 ### Publish
@@ -64,9 +64,24 @@ Now use `circleci config validate` to validate the config file at `$PWD/.circlec
 celo-monorepo $ circleci local execute --job test-npm-package-install -v $PWD:/home/circleci/app
 ```
 
+### How to access [Bulldozer](https://github.com/palantir/bulldozer) deployment for Celo
+
+Instance on GCP: [https://console.cloud.google.com/compute/instancesDetail/zones/us-west1-b/instances/ashishb-bulldozer-testing](https://console.cloud.google.com/compute/instancesDetail/zones/us-west1-b/instances/ashishb-bulldozer-testing)
+SSH: `gcloud beta compute --project "celo-testnet" ssh --zone "us-west1-b" "ashishb-bulldozer-testing"` and then `screen -r`
+GitHub app: [https://github.com/apps/bulldozer-deployment-for-celo](https://github.com/apps/bulldozer-deployment-for-celo)
+Bulldozer was built and started from source code using `cd /home/ashishb/go/src/bulldozer && ./godelw run bulldozer server | tee /tmp/bulldozer.log` and it uses ashishb's auth token for authentication for now.
+
+
+#### Two Limitations of Bulldozer
+
+1. It won't "update" unless the code changes. So, adding a new label won't cause it to trigger the rebase. This is a [known issue](https://github.com/palantir/bulldozer#bulldozer-isnt-updating-my-branch-when-it-should-what-could-be-happening)
+2. Bulldozer has no UI or status updates. There is no indication that it is working on a PR except in Bulldozer logs. Another [known issue](https://github.com/palantir/bulldozer/issues/70).
+
 ### Docker cleanup
 
 `docker image prune` to prune dangling images and `docker image prune -a` to prune images with no associated containers.
+
+`docker system prune` is even more aggressive - see [https://stackoverflow.com/a/36584376](https://stackoverflow.com/a/36584376)
 
 ## Geth
 
