@@ -48,10 +48,12 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 # For testing contractkit, cli, and utils package before publishing them
 $ docker run -v $PWD/packages/contractkit:/tmp/npm_package -it --entrypoint bash node:8
 # Inside docker
-$ cd /tmp and yarn add /tmp/npm_package
+$ cd /tmp && yarn add /tmp/npm_package
 ```
 
 ### Publish
+
+Packages whose name starts with prefix `@celo/` are scoped. They can only be published by those who are member of [celo](https://www.npmjs.com/settings/celo/members) group. All of our packages are scoped.
 
 ```
 packages/contractkit $ yarn publish --access=public
@@ -141,6 +143,10 @@ If the call is state-modifying then use `evm.Call`. Signature is `ret, leftoverG
 
 Example of a state-modifying call: [credit/debit Stable Token balance](https://github.com/celo-org/geth/blob/c7e03ac465dbe8b8c8b70fa09aac267b7d624d19/core/state_transition.go#L268)
 
+### How to debug celocli
+
+Put `DEBUG=*` prefix before calling `yarn run celocli` to print detailed logging.
+
 ## Mobile
 
 ### How to build a release binary for Android - signed by debug signatures
@@ -148,3 +154,7 @@ Example of a state-modifying call: [credit/debit Stable Token balance](https://g
 ```
 CELO_RELEASE_STORE_PASSWORD='' ./gradlew assembleRelease --info && echo android | java -jar ~/src/adb-enhanced/src/apksigner.jar sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey ~/celo/celo-monorepo/packages/mobile/android/app/build/outputs/apk/release/app-x86-release-unsigned.apk
 ```
+
+### Typescript debugging tips
+
+1. Use `JSON.stringify()` to print objects. It won't work for circular objects, use `util.inspect()` for those objects.
