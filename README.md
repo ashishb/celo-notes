@@ -45,7 +45,9 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 #### Test
 
 ```
-# For testing contractkit, cli, and utils package before publishing them
+# For testing contractkit package before publishing it.
+# To test utils, change packages/contractkit to packages/utils
+# To test cli, change packages/contractkit to packages/cli
 $ docker run -v $PWD/packages/contractkit:/tmp/npm_package -it --entrypoint bash node:8
 # Inside docker
 $ cd /tmp && yarn add /tmp/npm_package
