@@ -154,7 +154,19 @@ Put `DEBUG=*` prefix before calling `yarn run celocli` to print detailed logging
 ### How to build a release binary for Android - signed by debug signatures
 
 ```
-CELO_RELEASE_STORE_PASSWORD='' ./gradlew assembleRelease --info && echo android | java -jar ~/src/adb-enhanced/src/apksigner.jar sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey ~/celo/celo-monorepo/packages/mobile/android/app/build/outputs/apk/release/app-x86-release-unsigned.apk
+# First, go to celo-monorepo/packages/mobile/android directory,
+# Copy your personal debug.keystore to fake a release key signer
+packages/mobile/android $ cp ~/.android/debug.keystore celo-release-key.keystore
+
+# Build it
+packages/mobile/android $ CELO_RELEASE_STORE_PASSWORD='' ./gradlew assembleRelease --info
+
+# This produces an unsigned (I am not sure why?) apk in "~/celo/celo-monorepo/packages/mobile/android/app/build/outputs/apk/release/app-release-unsigned.apk"
+# Sign it using apksigner
+packages/mobile/android $ java -jar apksigner.jar sign --ks ~/.android/debug.keystore --ks-key-alias androiddebugkey ~/celo/celo-monorepo/packages/mobile/android/app/build/outputs/apk/release/app-x86-release-unsigned.apk # (Password: android)
+
+# Install
+packages/mobile/android $ adb install app/build/outputs/apk/release/app-x86-release-unsigned.apk  # (usually, use x86 for emulator and arm for mobile device)
 ```
 
 ### Typescript debugging tips
