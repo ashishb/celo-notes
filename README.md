@@ -40,6 +40,16 @@ export NETWORK_NAME=integration && celotooljs deploy upgrade testnet -e ${NETWOR
 2. Execute `geth attach --exec "debug.verbosity(5)"`
 3. Once you are done testing. Reset the verbosity back to a low value: `geth attach --exec "debug.verbosity(2)"`
 
+### How to test modifications to geth by deploying a testnet
+
+1. Checkout geth - [https://github.com/celo-org/geth](https://github.com/celo-org/geth)
+2. Make your modifications to geth
+3. Build your new docker image - `docker build -f Dockerfile -t gcr.io/celo-testnet/geth:$USER .`. Here the image being build is `gcr.io/celo-testnet/geth` and it is tagged with your username. You can use any other username as well as long as it is unique.
+4. Push that to Google Cloud registry - `docker push gcr.io/celo-testnet/geth:$USER`
+5. Now in celo-monorepo, modify `.env` file, change `GETH_NODE_DOCKER_IMAGE_TAG` to the tag from step 2.
+6. If you want to change bootnode, which normally isn't required then, in `.env` file, change `GETH_BOOTNODE_DOCKER_IMAGE_REPOSITORY` tag to `gcr.io/celo-testnet/geth` and `GETH_BOOTNODE_DOCKER_IMAGE_TAG` to the tag from step 2.
+7. Now, start your testnet as described earlier in this document.
+
 ### How to publish new npm packages
 
 #### Test
